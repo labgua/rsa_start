@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Imparare RSA con JsEncrypt</title>
+
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+</head>
+<body>
+
+	<div class="jumbotron">
+      <div class="container">
+        <h1>RSA Encryption</h1>
+        <p>Questo è un semplice strumento che ti aiuterà a capire come funziona la crittografia asimmetrica RSA.</p>
+        <p><a class="btn btn-primary btn-lg" href="https://it.wikipedia.org/wiki/RSA_(crittografia)" role="button">Leggi di più »</a></p>
+      </div>
+    </div>
+
+
+<div class="container">
+
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="active">
+          <a href="#intro" role="tab" data-toggle="tab">
+              <icon class="fa fa-home"></icon> Introduzione
+          </a>
+      </li>
+      <li><a href="#chat" role="tab" data-toggle="tab">
+          <i class="fa fa-user"></i> Chat Cifrata
+          </a>
+      </li>
+    </ul>
+
+      <div class="tab-content">
+      <div class="tab-pane fade active in" id="intro">
+          <h2>Introduzione ad RSA</h2>
+
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="col-md-12">
+          <h2>#1 - Generazione delle chiavi</h2>
+          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+        </div>
+
+		<div class="col-md-12">
+	        <div class="btn-group">
+	          <div class="input-group">
+	            <span class="input-group-addon">Key Size</span>
+	            <button class="btn btn-default dropdown-toggle" id="key-size" type="button" data-value="1024" data-toggle="dropdown">1024 bit <span class="caret"></span></button>
+	            <ul class="dropdown-menu">
+	              <li><a class="change-key-size" data-value="512" href="#">512 bit</a></li>
+	              <li><a class="change-key-size" data-value="1024" href="#">1024 bit</a></li>
+	              <li><a class="change-key-size" data-value="2048" href="#">2048 bit</a></li>
+	              <li><a class="change-key-size" data-value="4096" href="#">4096 bit</a></li>
+	            </ul>
+
+	            <button id="generate" class="btn btn-primary" style="float: right;" onclick="generateKeys()">Generate New Keys</button>
+	          </div>
+	        </div>
+		</div>
+
+		<div class="col-md-12" style="margin-top: 30px;">
+	        <div class="col-md-6">
+	        	<div class="form-group">
+				  <label for="pubkey">Chiave Pubblica:</label>
+				  <textarea class="form-control" rows="15" id="pubkey"></textarea>
+				</div>
+	        </div>
+	        <div class="col-md-6">
+	        	<div class="form-group">
+				  <label for="privkey">Chiave Privata:</label>
+				  <textarea class="form-control" rows="15" id="privkey"></textarea>
+				</div>
+	        </div>
+      	</div>
+
+      </div>
+
+
+      <div class="row">
+        <div class="col-md-12">
+          <h2>#2 - Cifratura di un Messaggio</h2>
+          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+          
+	        <button id="cript" class="btn btn-primary" onclick="encrypt()" >Cripta</button>
+	        
+        </div>
+
+
+       <div class="col-md-12 crypt-pane" style="margin-top: 15px;">
+	      <div class="col-ld-5">
+	        <label for="input">Input:</label><br>
+	        <textarea class="input" name="input" style="width: 100%" rows="4">Hello Bob!</textarea>
+	      </div>
+	      <div class="col-ld-5">
+	        <label for="output">Output:</label><br>
+	        <textarea class="output" name="output" style="width: 100%" rows="4"></textarea>
+	      </div>
+		</div>
+      
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <h2>#3 - Decrifratura del Messaggio</h2>
+          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+
+          <button id="decript" class="btn btn-primary" onclick="decrypt()" >Decripta</button>
+        </div>
+
+       <div class="col-md-12 decrypt-pane" style="margin-top: 15px;">
+	      <div class="col-ld-5">
+	        <label for="input">Input:</label><br>
+	        <textarea class="input" name="input" style="width: 100%" rows="4">Hello Bob!</textarea>
+	      </div>
+	      <div class="col-ld-5">
+	        <label for="output">Output:</label><br>
+	        <textarea class="output" name="output" style="width: 100%" rows="4"></textarea>
+	      </div>
+		</div>
+
+      </div>
+
+      </div>
+      <div class="tab-pane fade" id="chat">
+          <h2>Esempio di una Chat Cifrata</h2>
+          
+          	<div class="col-md-12">
+				<div class="col-md-6">
+					<p>Chat logger:</p>
+					<textarea class="form-control" rows="25" id="chatlog"></textarea>
+
+					<div class="form-group" >
+						<label>Destinatario:</label> 
+						<input type="text" class="form-control" id="in_dest">
+					</div>
+					<div class="form-group" >
+						<label>Testo:</label> 
+						<input type="text" class="form-control" id="msg_tosend">
+						<button id="btn_close" class="btn btn-primary" onclick="send()" >Invia</button>
+					</div>
+
+				</div>
+
+				<div class="col-md-6">
+					<div class="form-group" >
+						<label>IP Server Chat:</label> 
+						<input type="text" class="form-control" id="in_ipserversock">
+					</div>
+					<div class="form-group" >
+						<label>Nome identificativo:</label> 
+						<input type="text" class="form-control" id="in_name">
+					</div>
+					<div class="form-group" >
+						<label>Chiave Privata:</label> 
+						<textarea class="form-control" rows="10" id="in_privkey"></textarea>
+					</div>
+					<div class="form-group" >
+						<button id="btn_connect" class="btn btn-primary" onclick="connect()" >Collegati</button>
+						<button id="btn_close" class="btn btn-primary" onclick="close()" >Scollegati</button>
+					</div>
+				</div>
+
+			</div>
+
+      </div>
+    </div>
+
+  <hr>
+      <footer>
+        <p>LABGUA SOFTWARE © 2020</p>
+      </footer>
+    </div>
+
+
+	<script type="text/javascript" src="http://travistidwell.com/jsencrypt/bin/jsencrypt.js"></script>
+
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+	<script type="text/javascript">
+
+		var crypt = new JSEncrypt();
+		var crypt_sender = new JSEncrypt();
+		var webSocket = null;
+
+		var pubkey_dest = [];
+
+		function verifyInputKey(){
+			var in_privKey = $('#privkey').val();
+			var in_pubKey = $('#pubkey').val();
+			var testcrypt = new JSEncrypt();
+
+			if( !in_privKey && !in_pubKey ){
+				testcrypt.setPrivateKey(in_privKey);
+				if( testcrypt.getPublicKey() == in_pubKey ) return true;
+				else return false;
+			}
+
+			return true;
+		}
+
+		function encrypt(){
+
+			if( !$('#pubkey').val()  ){
+				console.log("ERROR: chiave pubblica non presente.");
+				return;
+			}
+			if( verifyInputKey() ==  false ){
+				console.log("ERROR: chiave pubblica e privata non coincidono!");
+				return;
+			}
+
+			var sKeySize = $('#key-size').attr('data-value');
+			var keySize = parseInt(sKeySize);
+
+			crypt = new JSEncrypt({default_key_size: keySize});
+
+			crypt.setPublicKey( $('#pubkey').val() );
+
+			var input = $('.crypt-pane .input').val();
+			$('.crypt-pane .output').val( crypt.encrypt(input) );
+		}
+
+		function decrypt(){
+
+			if( !$('#privkey').val()  ){
+				console.log("ERROR: chiave privata non presente.")
+				return;
+			}
+
+			var sKeySize = $('#key-size').attr('data-value');
+			var keySize = parseInt(sKeySize);
+
+			crypt = new JSEncrypt({default_key_size: keySize});
+
+			crypt.setPrivateKey( $('#privkey').val() );
+
+			// se non è presente, genera la chiave pubblica dalla privata...
+			if( !$('#pubkey').val() ){
+				$('#pubkey').val( crypt.getPublicKey() );
+			}
+
+			var input = $('.decrypt-pane .input').val();
+			$('.decrypt-pane .output').val( crypt.decrypt(input) );
+		}
+
+
+		function generateKeys() {
+
+			var sKeySize = $('#key-size').attr('data-value');
+			var keySize = parseInt(sKeySize);
+
+			crypt = new JSEncrypt({default_key_size: keySize});
+
+			$('#privkey').val( crypt.getPrivateKey() );
+			$('#pubkey').val( crypt.getPublicKey() );
+
+		};
+
+		function connect(){
+
+			if( webSocket != null ){
+				webSocket.close();
+			}
+
+			ipserversock = $('#in_ipserversock').val();
+			if( !ipserversock ){
+				console.log("ERROR: Ip del server websocket non inserito!");
+				return;
+			}
+
+			name = $('#in_name').val();
+			if( !name ){
+				console.log("ERROR: Devi inserire un nome!");
+				return;
+			}
+
+			chat_privkey = $('#in_privkey').val();
+			if( !chat_privkey ){
+				console.log("ERROR: Devi inserire la chiave RSA!");
+				return;
+			}
+
+			crypt = new JSEncrypt();
+			crypt.setPrivateKey(chat_privkey);
+
+			webSocket = new WebSocket("ws://" + ipserversock + "/chat");
+
+			webSocket.onopen = function (event) {
+				console.log("Connesso!");
+				webSocket.send("REC####" + name);
+			};
+			webSocket.onmessage = function (event) {
+				
+				msg = event.data;
+
+				console.log("Messaggio ricevuto", msg);
+
+				if( msg.startsWith("RECV####")){
+					params = msg.split("####");
+					sender = params[1];
+					txt = params[2];
+
+					$('#chatlog').append(sender + ": " + crypt.decrypt(txt) + "\n");
+				}
+
+				if( msg.startsWith("KEYREQUEST####") ){
+					params = msg.split("####");
+					requester = params[1];
+
+					webSocket.send("KEYREPLY####" + requester + "####" + crypt.getPublicKey() );
+				}
+
+				if( msg.startsWith("KEYREPLY####") ){
+					params = msg.split("####");
+					receiver = params[1];
+					pubkey_receiver = params[2];
+
+					pubkey_dest[receiver] = pubkey_receiver;
+				}
+
+
+			};
+
+		}
+
+		function close(){
+			webSocket.close();
+			webSocket = null;
+		}
+
+
+		function send(){
+			//1 preleva la chiave pubblica
+			//2 invia il messaggio cifrato
+
+			dest = $('#in_dest').val();
+			if( !dest ){
+				console.log("ERROR: Devi inserire un nome destinatario");
+				return;
+			}
+
+			msg_tosend = $('#msg_tosend').val();
+			if( !msg_tosend ){
+				console.log("ERROR: Devi inserire un messaggio da spedire");
+				return;
+			}
+
+			if( !pubkey_dest[dest] ){
+				webSocket.send("KEYREQUEST####" + dest );
+				return;
+			}
+
+
+			curr_pub_key = pubkey_dest[dest];
+			crypt_sender = new JSEncrypt();
+			crypt_sender.setPublicKey(curr_pub_key);
+
+			msg_cripted = crypt_sender.encrypt(msg_tosend);
+
+			webSocket.send("SEND####" + dest + "####" + msg_cripted);
+
+			$('#chatlog').append("Tu a " + dest + ": " + msg_tosend + "\n");			
+		}
+
+
+	</script>
+</body>
+</html>
